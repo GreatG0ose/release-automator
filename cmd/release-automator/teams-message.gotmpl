@@ -1,0 +1,13 @@
+# Request for management sign-off: {{ .Release.ProjectName }} Release Version v{{ .Release.Version }}
+
+{{ range $name := .Mentions }}{{ $name }} {{ end }}
+
+{{ .Release.Changelog.Summary }}
+
+Release will take place provided the Go/NoGo meeting resulted in Go.
+
+# ChangeLog
+
+{{ .Release.Changelog.Changes }}
+
+Release checklist for Java SDK v1.2.0.0
