@@ -10,12 +10,12 @@ import (
 //go:embed teams-message.gotmpl
 var signOffTemplate string
 
-type SignOffMessageContext struct {
+type signOffMessageContext struct {
 	Release  Release
 	Mentions []string
 }
 
-func renderSignOffMessage(msgCtx SignOffMessageContext) (string, error) {
+func renderSignOffMessage(release Release, mentions []string) (string, error) {
 	tmpl, err := template.New("SignOffMessage").Parse(signOffTemplate)
 
 	if err != nil {
@@ -23,7 +23,10 @@ func renderSignOffMessage(msgCtx SignOffMessageContext) (string, error) {
 	}
 
 	var templateOutput bytes.Buffer
-	err = tmpl.Execute(&templateOutput, msgCtx)
+	err = tmpl.Execute(&templateOutput, signOffMessageContext{
+		Release:  release,
+		Mentions: mentions,
+	})
 	if err != nil {
 		return "", fmt.Errorf("unable to render message: %w", err)
 	}

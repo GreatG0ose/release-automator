@@ -35,13 +35,12 @@ Release will take place provided the Go/NoGo meeting resulted in Go.
 
 Release checklist for Java SDK v1.2.0.0
 `
-	msgCtx := SignOffMessageContext{
-		Release: Release{
-			ProjectName: "Java-SDK",
-			Version:     "1.2.0.0",
-			Changelog: ReleaseChangelog{
-				Summary: "This release introduces a brilliant feature A to replace feature C",
-				Changes: `## Deprecated
+	release := Release{
+		ProjectName: "Java-SDK",
+		Version:     "1.2.0.0",
+		Changelog: ReleaseChangelog{
+			Summary: "This release introduces a brilliant feature A to replace feature C",
+			Changes: `## Deprecated
 
 * Old feature B
 * Another old feature C
@@ -57,12 +56,11 @@ Release checklist for Java SDK v1.2.0.0
 
 * Fixed old bug
 * Fixed not so old bug`,
-			},
 		},
-		Mentions: []string{"Oleksii Ishchenko", "Rene Salecker", "Tess Akerlund", "Timo Seifert", "Simon Gabriel"},
 	}
+	mentions := []string{"Oleksii Ishchenko", "Rene Salecker", "Tess Akerlund", "Timo Seifert", "Simon Gabriel"}
 
-	actual, err := renderSignOffMessage(msgCtx)
+	actual, err := renderSignOffMessage(release, mentions)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedText, actual)
 }
