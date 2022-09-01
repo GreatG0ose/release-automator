@@ -2,21 +2,25 @@ package changelog
 
 import (
 	"fmt"
+	"github.com/GreatG0ose/release-automator/internal/config"
+	"os"
 	"strings"
 )
 
-// ReleaseChangelog contains summary of a release and it's changes
-type ReleaseChangelog struct {
-	Summary string // Overall summary of the release
-	Changes string // Markdown formatted changes
+// ReleaseChanges contains summary of a release and it's changes
+type ReleaseChanges struct {
+	Summary string            // Overall summary of the release
+	Changes map[string]string // Headers to markdown formatted changes
 }
 
-// ExtractReleaseNotes parses changelog and returns ReleaseChangelog for version
-func ExtractReleaseNotes(changelog string, releaseVersion string) (ReleaseChangelog, error) {
-	lines := strings.Split(
-		normalizeString(changelog),
-		"\n",
-	)
+// ExtractReleaseChanges parses changelog and returns ReleaseChanges for version
+func ExtractReleaseChanges(cfg config.Config, releaseVersion string) (ReleaseChanges, error) {
+	changelogText, err := os.ReadFile(cfg.Project.ChangelogPath)
+	if err != nil {
+		return ReleaseChanges{}, fmt.Errorf("failed to read changelog %s: %w", cfg.Project.ChangelogPath, err)
+	}
+
+	lines := strings.Split(normalizeString(string(changelogText)), "\n")
 
 	// Find segment start
 	releaseStart := -1
@@ -29,7 +33,7 @@ func ExtractReleaseNotes(changelog string, releaseVersion string) (ReleaseChange
 		}
 	}
 	if releaseStart == -1 {
-		return ReleaseChangelog{}, fmt.Errorf("release version '%s' not found in changelog", releaseVersion)
+		return ReleaseChanges{}, fmt.Errorf("release version '%s' not found in changelog", releaseVersion)
 	}
 
 	// Find segment end
@@ -46,7 +50,7 @@ func ExtractReleaseNotes(changelog string, releaseVersion string) (ReleaseChange
 	// Extract summary
 	summaryEnd := -1
 	for i, l := range releaseSegment[1:] {
-		if strings.HasPrefix(l, "###") {
+		if strings.HasPrefix(l, "### ") {
 			summaryEnd = i
 			break
 		}
@@ -55,15 +59,33 @@ func ExtractReleaseNotes(changelog string, releaseVersion string) (ReleaseChange
 		strings.Join(releaseSegment[1:summaryEnd], "\n"),
 	)
 
-	// Extract changes
-	changes := strings.TrimSpace(
-		strings.Join(releaseSegment[summaryEnd:], "\n"),
-	)
-
-	return ReleaseChangelog{
+	return ReleaseChanges{
 		Summary: summary,
-		Changes: changes,
+		Changes: parseChanges(releaseSegment[summaryEnd:]),
 	}, nil
+}
+
+// parseChanges extracts headers and related text blocks from version section of changelog
+func parseChanges(changes []string) map[string]string {
+	mappedBlocks := make(map[string][]string)
+
+	currentHeader := ""
+	for _, l := range changes {
+		if strings.HasPrefix(l, "### ") {
+			currentHeader = strings.TrimSpace(strings.TrimPrefix(l, "###"))
+		} else if currentHeader == "" {
+			continue
+		} else {
+			mappedBlocks[currentHeader] = append(mappedBlocks[currentHeader], l)
+		}
+	}
+
+	result := make(map[string]string)
+	for h, b := range mappedBlocks {
+		result[h] = strings.TrimSpace(strings.Join(b, "\n"))
+	}
+
+	return result
 }
 
 func normalizeString(changeLog string) string {

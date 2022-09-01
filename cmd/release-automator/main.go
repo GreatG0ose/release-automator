@@ -2,62 +2,90 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/GreatG0ose/release-automator/internal/changelog"
+	"github.com/GreatG0ose/release-automator/internal/config"
 	"github.com/GreatG0ose/release-automator/internal/ms_teams"
 	"github.com/GreatG0ose/release-automator/internal/release"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"os"
 )
 
+const configDefaultPath = "release-automator.yaml"
+
 func main() {
-	// Parse and validate arguments
-	releaseVersion := flag.String("release-version", "", "") // TODO: add usage
-	projectName := flag.String("project-name", "", "")       // TODO: add usage
-	changelogFile := flag.String("changelog-path", "", "")   // TODO: add usage
+	// Setup logger
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
-	// TODO: add confluence release page link
-	// TODO: obtain go/nogo page from confluence page
+	// Setup and parse arguments
+	releaseVersion := flag.String(
+		"version",
+		"",
+		"Version that will be released",
+	)
 
+	releaseChecklistUrl := flag.String(
+		"checklist-url",
+		"",
+		"Link to Checklist page created for the release",
+	)
+
+	configPath := flag.String(
+		"config-path",
+		"",
+		"Path to release-automator YAML config",
+	)
 	flag.Parse()
 
+	// Validate arguments
 	if *releaseVersion == "" {
-		panic("release-version is required")
+		log.Error().Msg("version is required")
+		os.Exit(1)
 	}
 
-	if *projectName == "" {
-		panic("project-name is required")
+	if *releaseChecklistUrl == "" {
+		log.Error().Msg("checklist-url is required")
+		os.Exit(1)
 	}
 
-	if *changelogFile == "" {
-		panic("changelog-path is required")
+	if *configPath == "" {
+		log.Warn().Str("config-path", configDefaultPath).Msg("config-path is not set. default value is used")
+		*configPath = configDefaultPath
+	} else {
+		log.Info().Str("config-path", *configPath).Msg("custom config is used")
 	}
 
-	// TODO: make mentions configurable
-	mentions := []string{"Oleksii Ishchenko", "Rene Salecker", "Tess Akerlund", "Timo Seifert", "Simon Gabriel"}
-
-	changelog, err := os.ReadFile(*changelogFile)
+	// Load config
+	log.Info().Str("config-path", *configPath).Msg("loading config")
+	cfg, err := config.LoadConfig(*configPath)
 	if err != nil {
-		panic(fmt.Errorf("failed to read changelog file '%s': %w", *changelogFile, err))
+		log.With().Str("config-path", configDefaultPath).Err(err).Str("msg", "couldn't load config")
+		os.Exit(1)
 	}
 
-	msg, err := generateSignoffMessage(*projectName, string(changelog), *releaseVersion, mentions)
-	println(msg)
-}
+	// Adjust logger
+	l := log.With().Str("project", cfg.Project.Name).Str("version", *releaseVersion).Logger()
 
-func generateSignoffMessage(projectName string, changelogText string, version string, mentions []string) (string, error) {
-	releaseChangelog, err := changelog.ExtractReleaseNotes(changelogText, version)
+	// Extract changes
+	l.Info().Msg("extracting changes from changelog")
+	releaseChanges, err := changelog.ExtractReleaseChanges(cfg, *releaseVersion)
 	if err != nil {
-		return "", fmt.Errorf("failed to extract release notes: %w", err)
+		l.Error().Err(err).Msg("unable to extract release changes")
 	}
 
-	message, err := ms_teams.RenderSignOffMessage(release.Release{
-		ProjectName: projectName,
-		Version:     version,
-		Changelog:   releaseChangelog,
-	}, mentions)
+	// Send SignOff to MS Teams
+	l.Info().Msg("sending message to teams")
+	err = ms_teams.SendSignOffMessage(
+		cfg,
+		release.Release{
+			Version:      *releaseVersion,
+			ChecklistUrl: *releaseChecklistUrl,
+			Changes:      releaseChanges,
+		},
+	)
 	if err != nil {
-		return "", fmt.Errorf("failed to render message: %w", err)
+		l.Error().Err(err).Msg("couldn't send sign-off message")
 	}
 
-	return message, nil
+	l.Info().Msg("execution completed")
 }
