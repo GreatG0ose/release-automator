@@ -1,6 +1,8 @@
-package main
+package ms_teams
 
 import (
+	"github.com/GreatG0ose/release-automator/internal/changelog"
+	"github.com/GreatG0ose/release-automator/internal/release"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -35,10 +37,10 @@ Release will take place provided the Go/NoGo meeting resulted in Go.
 
 Release checklist for Java SDK v1.2.0.0
 `
-	release := Release{
+	testRelease := release.Release{
 		ProjectName: "Java-SDK",
 		Version:     "1.2.0.0",
-		Changelog: ReleaseChangelog{
+		Changelog: changelog.ReleaseChangelog{
 			Summary: "This release introduces a brilliant feature A to replace feature C",
 			Changes: `## Deprecated
 
@@ -60,7 +62,7 @@ Release checklist for Java SDK v1.2.0.0
 	}
 	mentions := []string{"Oleksii Ishchenko", "Rene Salecker", "Tess Akerlund", "Timo Seifert", "Simon Gabriel"}
 
-	actual, err := renderSignOffMessage(release, mentions)
+	actual, err := RenderSignOffMessage(testRelease, mentions)
 	assert.NoError(t, err)
 	assert.Equal(t, expectedText, actual)
 }

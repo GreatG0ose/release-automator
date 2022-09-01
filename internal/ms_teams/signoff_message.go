@@ -1,9 +1,10 @@
-package main
+package ms_teams
 
 import (
 	"bytes"
 	_ "embed"
 	"fmt"
+	"github.com/GreatG0ose/release-automator/internal/release"
 	"text/template"
 )
 
@@ -11,11 +12,11 @@ import (
 var signOffTemplate string
 
 type signOffMessageContext struct {
-	Release  Release
+	Release  release.Release
 	Mentions []string
 }
 
-func renderSignOffMessage(release Release, mentions []string) (string, error) {
+func RenderSignOffMessage(release release.Release, mentions []string) (string, error) {
 	tmpl, err := template.New("SignOffMessage").Parse(signOffTemplate)
 
 	if err != nil {

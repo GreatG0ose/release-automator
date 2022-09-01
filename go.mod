@@ -3,9 +3,8 @@ module github.com/GreatG0ose/release-automator
 go 1.18
 
 require (
-	github.com/gomarkdown/markdown v0.0.0-20220817224203-2206187d3406
+	github.com/atc0005/go-teams-notify/v2 v2.7.0-alpha.6
 	github.com/stretchr/testify v1.8.0
-	github.com/yuin/goldmark v1.4.13
 )
 
 require (

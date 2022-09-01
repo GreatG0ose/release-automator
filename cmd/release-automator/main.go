@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/GreatG0ose/release-automator/internal/changelog"
+	"github.com/GreatG0ose/release-automator/internal/ms_teams"
+	"github.com/GreatG0ose/release-automator/internal/release"
 	"os"
 )
 
@@ -41,28 +44,20 @@ func main() {
 	println(msg)
 }
 
-func generateSignoffMessage(projectName string, changelog string, version string, mentions []string) (string, error) {
-	releaseChangelog, err := ExtractReleaseNotes(changelog, version)
+func generateSignoffMessage(projectName string, changelogText string, version string, mentions []string) (string, error) {
+	releaseChangelog, err := changelog.ExtractReleaseNotes(changelogText, version)
 	if err != nil {
 		return "", fmt.Errorf("failed to extract release notes: %w", err)
 	}
 
-	release := Release{
+	message, err := ms_teams.RenderSignOffMessage(release.Release{
 		ProjectName: projectName,
 		Version:     version,
 		Changelog:   releaseChangelog,
-	}
-
-	message, err := renderSignOffMessage(release, mentions)
+	}, mentions)
 	if err != nil {
 		return "", fmt.Errorf("failed to render message: %w", err)
 	}
 
 	return message, nil
-}
-
-type Release struct {
-	ProjectName string // Name of the project
-	Version     string // Version to release
-	Changelog   ReleaseChangelog
 }
