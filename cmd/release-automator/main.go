@@ -4,8 +4,6 @@ import (
 	"flag"
 	"github.com/GreatG0ose/release-automator/internal/changelog"
 	"github.com/GreatG0ose/release-automator/internal/config"
-	"github.com/GreatG0ose/release-automator/internal/ms_teams"
-	"github.com/GreatG0ose/release-automator/internal/release"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"os"
@@ -73,18 +71,14 @@ func main() {
 		l.Error().Err(err).Msg("unable to extract release changes")
 	}
 
-	// Send SignOff to MS Teams
-	l.Info().Msg("sending message to teams")
-	err = ms_teams.SendSignOffMessage(
-		cfg,
-		release.Release{
-			Version:      *releaseVersion,
-			ChecklistUrl: *releaseChecklistUrl,
-			Changes:      releaseChanges,
-		},
-	)
-	if err != nil {
-		l.Error().Err(err).Msg("couldn't send sign-off message")
+	switch flag.Arg(0) {
+	case "signoff":
+		sendSignOffMessage(l, cfg, releaseVersion, releaseChecklistUrl, releaseChanges)
+	case "mail":
+		sendFullReleaseEmail(l, cfg, releaseVersion, releaseChecklistUrl, releaseChanges)
+	default:
+		l.Error().Str("command", flag.Arg(0)).Msg("unknown command")
+		os.Exit(1)
 	}
 
 	l.Info().Msg("execution completed")

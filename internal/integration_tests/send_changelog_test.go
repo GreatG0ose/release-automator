@@ -3,8 +3,8 @@ package integration_tests
 import (
 	"github.com/GreatG0ose/release-automator/internal/changelog"
 	"github.com/GreatG0ose/release-automator/internal/config"
-	"github.com/GreatG0ose/release-automator/internal/ms_teams"
 	"github.com/GreatG0ose/release-automator/internal/release"
+	"github.com/GreatG0ose/release-automator/internal/signoff_message"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -36,6 +36,6 @@ func TestSendChangeLogToTeams(t *testing.T) {
 		Changes: releaseChangelog,
 	}
 
-	err = ms_teams.SendSignOffMessage(cfg, r)
+	err = signoff_message.SendSignOffMessage(cfg, r)
 	require.NoError(t, err)
 }

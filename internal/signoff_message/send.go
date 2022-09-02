@@ -1,4 +1,4 @@
-package ms_teams
+package signoff_message
 
 import (
 	"fmt"

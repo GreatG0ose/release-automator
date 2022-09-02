@@ -2,7 +2,11 @@ project:
   name: "<Project Name>"
   changelogPath: "CHANGELOG.md"
 signOff:
-  teamsWebhook: ""
+  teamsWebhook: "https://webhook.office.com/webhookb2/<SOME-MAGIC-NUMBERS>"
   mentions:
     - name: "Firstname Lastname"
       teamsID: "firstname.lastname@company.com"
+    - name: "Other Person"
+      teamsID: "other.person@company.com"
+email:
+  outlookWebhook: ""
