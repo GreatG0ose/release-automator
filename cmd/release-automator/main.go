@@ -2,14 +2,21 @@ package main
 
 import (
 	"flag"
-	"github.com/GreatG0ose/release-automator/internal/changelog"
+	"fmt"
 	"github.com/GreatG0ose/release-automator/internal/config"
+	"github.com/GreatG0ose/release-automator/internal/fullrelease_message"
+	"github.com/GreatG0ose/release-automator/internal/release"
+	"github.com/GreatG0ose/release-automator/internal/signoff_message"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"os"
 )
 
 const configDefaultPath = "release-automator.yaml"
+const (
+	signOffCmd  = "signoff"
+	sendMailCmd = "mail"
+)
 
 func main() {
 	// Setup logger
@@ -22,12 +29,6 @@ func main() {
 		"Version that will be released",
 	)
 
-	releaseChecklistUrl := flag.String(
-		"checklist-url",
-		"",
-		"Link to Checklist page created for the release",
-	)
-
 	configPath := flag.String(
 		"config-path",
 		"",
@@ -38,11 +39,6 @@ func main() {
 	// Validate arguments
 	if *releaseVersion == "" {
 		log.Error().Msg("version is required")
-		os.Exit(1)
-	}
-
-	if *releaseChecklistUrl == "" {
-		log.Error().Msg("checklist-url is required")
 		os.Exit(1)
 	}
 
@@ -62,24 +58,34 @@ func main() {
 	}
 
 	// Adjust logger
-	l := log.With().Str("project", cfg.Project.Name).Str("version", *releaseVersion).Logger()
+	cmd := flag.Arg(0)
+	l := log.With().
+		Str("project", cfg.Project.Name).
+		Str("version", *releaseVersion).
+		Str("cmd", cmd).
+		Logger()
 
-	// Extract changes
-	l.Info().Msg("extracting changes from changelog")
-	releaseChanges, err := changelog.ExtractReleaseChanges(cfg, *releaseVersion)
+	// Construct release context
+	l.Info().Msg("creating release context")
+	r, err := release.NewRelease(cfg, *releaseVersion)
 	if err != nil {
-		l.Error().Err(err).Msg("unable to extract release changes")
-	}
-
-	switch flag.Arg(0) {
-	case "signoff":
-		sendSignOffMessage(l, cfg, releaseVersion, releaseChecklistUrl, releaseChanges)
-	case "mail":
-		sendFullReleaseEmail(l, cfg, releaseVersion, releaseChecklistUrl, releaseChanges)
-	default:
-		l.Error().Str("command", flag.Arg(0)).Msg("unknown command")
+		l.Error().Err(err).Msg("unable to create release context")
 		os.Exit(1)
 	}
 
-	l.Info().Msg("execution completed")
+	switch cmd {
+	case signOffCmd:
+		err = signoff_message.SendSignOffMessage(cfg, r)
+	case sendMailCmd:
+		err = fullrelease_message.Send(cfg, r)
+	default:
+		err = fmt.Errorf("unknown command %s", cmd)
+	}
+
+	if err != nil {
+		l.Err(err).Msg("execution failed")
+		os.Exit(1)
+	}
+
+	l.Info().Msg("finished successfully")
 }
