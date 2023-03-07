@@ -4,6 +4,7 @@ COMMAND=$1
 CONFIG=$3
 VERSION=$3
 
+
 echo "$CONFIG" | base64 -d > release-automator.yaml
 
 go run ./cmd/release-automator --version=$VERSION $COMMAND
