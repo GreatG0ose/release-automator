@@ -22,7 +22,7 @@ func TestExtractReleaseNotes(t *testing.T) {
 	cfg := config.Config{
 		Project: config.Project{
 			Name:          "Java SDK",
-			ChangelogPath: "internal/changelog/testdata/changelog.md",
+			ChangelogPath: "testdata/changelog.md",
 		},
 	}
 
