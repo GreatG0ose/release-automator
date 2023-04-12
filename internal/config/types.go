@@ -5,7 +5,7 @@ type Config struct {
 	Project          Project          `yaml:"project"`    // Project is meta information of the target project
 	SignOff          SignOff          `yaml:"signOff"`    // SignOff used for sending sign-off messages to MS Teams
 	FullReleaseEmail FullReleaseEmail `yaml:"email"`      // FullReleaseEmail configures full-release message sending
-	Tweet            TweetConfig      `yaml:"tweet"`      // Tweet configures how release tweet should be rendered
+	Output           string           `yaml:"output"`     // Output directory where generated artifacts are stored
 	Confluence       Confluence       `yaml:"confluence"` // Confluence contains credentials and meta to connect to Confluence
 }
 
@@ -45,9 +45,4 @@ type Confluence struct {
 type Credentials struct {
 	Username    string `yaml:"username"`    // Username usually is email associated with account which has access to Confluence
 	AccessToken string `yaml:"accessToken"` // AccessToken used to access Confluence. Can be obtained here: https://id.atlassian.com/manage-profile/security/api-tokens
-}
-
-// TweetConfig configures how release tweet should be rendered
-type TweetConfig struct {
-	Out string `yaml:"out"` // Out is a path to output file
 }

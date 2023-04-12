@@ -36,13 +36,14 @@ func Render(l zerolog.Logger, c config.Config, r release.Release) error {
 		return fmt.Errorf("cannot render tweet: %w", err)
 	}
 
-	l.Info().Msgf("Generating output file %s", c.Tweet.Out)
-	err = os.MkdirAll(filepath.Dir(c.Tweet.Out), 0744)
+	outputFile := filepath.Join(c.Output, "tweet.txt")
+	l.Info().Msgf("Generating output file %s", outputFile)
+	err = os.MkdirAll(filepath.Dir(c.Output), 0744)
 	if err != nil {
 		return fmt.Errorf("failed to create dirs: %w", err)
 	}
 
-	f, err := os.OpenFile(c.Tweet.Out, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	f, err := os.OpenFile(outputFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return fmt.Errorf("cannot generate output file: %w", err)
 	}

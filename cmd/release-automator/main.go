@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/GreatG0ose/release-automator/internal/changes"
 	"github.com/GreatG0ose/release-automator/internal/config"
 	"github.com/GreatG0ose/release-automator/internal/fullrelease_message"
 	"github.com/GreatG0ose/release-automator/internal/release"
@@ -15,9 +16,10 @@ import (
 
 const configDefaultPath = "release-automator.yaml"
 const (
-	signOffCmd     = "signoff"
-	sendMailCmd    = "mail"
-	renderTweetCmd = "tweet"
+	signOffCmd        = "signoff"
+	sendMailCmd       = "mail"
+	renderTweetCmd    = "tweet"
+	getVersionChanges = "changes"
 )
 
 func main() {
@@ -55,7 +57,7 @@ func main() {
 	log.Info().Str("config-path", *configPath).Msg("loading config")
 	cfg, err := config.LoadConfig(*configPath)
 	if err != nil {
-		log.With().Str("config-path", configDefaultPath).Err(err).Str("msg", "couldn't load config")
+		log.Err(err).Msg("couldn't load config")
 		os.Exit(1)
 	}
 
@@ -82,6 +84,8 @@ func main() {
 		err = fullrelease_message.Send(cfg, r)
 	case renderTweetCmd:
 		err = tweet.Render(l, cfg, r)
+	case getVersionChanges:
+		err = changes.GenerateVersionChangesFile(l, cfg, r)
 	default:
 		err = fmt.Errorf("unknown command %s", cmd)
 	}
