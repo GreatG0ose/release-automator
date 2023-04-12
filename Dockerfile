@@ -1,20 +1,12 @@
-# Build release-automator
+# Build tool
 FROM golang:alpine as build
-
-WORKDIR release-automator
-
-# Copies your code file from your action repository to the filesystem path `/` of the container
-COPY . .
-
-RUN go install ./cmd/release-automator/...
-
-
-# Add bin to run release-automator
-FROM alpine:latest
-
-COPY --from=build /go/bin/release-automator /bin/release-automator
-COPY entrypoint.sh /bin/entrypoint.sh
-
 WORKDIR app
+COPY . .
+RUN go build -ldflags="-w -s" -o /go/bin/release ./cmd/release/...
 
-ENTRYPOINT ["/bin/entrypoint.sh"]
+# Use minimalistic image to run code
+FROM scratch
+COPY --from=build /go/bin/release /bin/release
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+WORKDIR app
+ENTRYPOINT ["/bin/release"]

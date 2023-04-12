@@ -8,7 +8,7 @@ import (
 
 // WriteToFile writes data to file. Creates all directories in path and file if something does not exist.
 func WriteToFile(path string, content []byte) error {
-	err := os.MkdirAll(filepath.Dir(path), 0644)
+	err := os.MkdirAll(filepath.Dir(path), 0744)
 	if err != nil {
 		return fmt.Errorf("failed to create dirs: %w", err)
 	}

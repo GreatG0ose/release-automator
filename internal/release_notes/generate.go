@@ -1,4 +1,4 @@
-package changes
+package release_notes
 
 import (
 	"bytes"
@@ -21,7 +21,7 @@ const changesTmpl = `{{ .Changes.Summary }}
 // Generate generates Markdown formatted file in Config.Output directory
 func Generate(l zerolog.Logger, c config.Config, r release.Release) error {
 	tmpl := template.Must(template.New("changes").Parse(changesTmpl))
-	outputFile := filepath.Join(c.Output, "changes.md")
+	outputFile := filepath.Join(c.Output, "ReleaseNotes.md")
 
 	l.Info().Msg("rendering changes...")
 	var data bytes.Buffer

@@ -1,4 +1,4 @@
-package changes
+package release_notes
 
 import (
 	"github.com/GreatG0ose/release-automator/internal/changelog"
@@ -44,5 +44,5 @@ func TestGenerateVersionChangesFile(t *testing.T) {
 	err = Generate(zerolog.Nop(), cfg, r)
 	assert.NoError(t, err)
 
-	test_utils.FilesEqual(t, filepath.Join("testdata", "changes.md"), filepath.Join(tmpdir, "changes.md"))
+	test_utils.FilesEqual(t, filepath.Join("testdata", "changes.md"), filepath.Join(tmpdir, "ReleaseNotes.md"))
 }

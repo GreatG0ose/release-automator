@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/GreatG0ose/release-automator/internal/changes"
 	"github.com/GreatG0ose/release-automator/internal/config"
 	"github.com/GreatG0ose/release-automator/internal/fullrelease_message"
 	"github.com/GreatG0ose/release-automator/internal/release"
+	"github.com/GreatG0ose/release-automator/internal/release_notes"
 	"github.com/GreatG0ose/release-automator/internal/signoff_message"
 	"github.com/GreatG0ose/release-automator/internal/tweet"
 	"github.com/rs/zerolog"
@@ -16,10 +16,10 @@ import (
 
 const configDefaultPath = "release-automator.yaml"
 const (
-	signOffCmd        = "signoff"
-	sendMailCmd       = "mail"
-	renderTweetCmd    = "tweet"
-	getVersionChanges = "changes"
+	signOffCmd     = "signoff"
+	sendMailCmd    = "mail"
+	renderTweetCmd = "tweet"
+	releaseNotes   = "notes"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 	)
 
 	configPath := flag.String(
-		"config-path",
+		"config",
 		"",
 		"Path to release-automator YAML config",
 	)
@@ -47,7 +47,7 @@ func main() {
 	}
 
 	if *configPath == "" {
-		log.Warn().Str("config-path", configDefaultPath).Msg("config-path is not set. default value is used")
+		log.Trace().Str("config-path", configDefaultPath).Msg("config-path is not set. default value is used")
 		*configPath = configDefaultPath
 	} else {
 		log.Info().Str("config-path", *configPath).Msg("custom config is used")
@@ -84,8 +84,8 @@ func main() {
 		err = fullrelease_message.Send(cfg, r)
 	case renderTweetCmd:
 		err = tweet.Generate(l, cfg, r)
-	case getVersionChanges:
-		err = changes.Generate(l, cfg, r)
+	case releaseNotes:
+		err = release_notes.Generate(l, cfg, r)
 	default:
 		err = fmt.Errorf("unknown command %s", cmd)
 	}
