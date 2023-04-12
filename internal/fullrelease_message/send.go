@@ -8,7 +8,7 @@ import (
 	"github.com/atc0005/go-teams-notify/v2/messagecard"
 )
 
-// TODO: add docs
+// Send sends release email to Outlook
 func Send(cfg config.Config, release release.Release) error {
 	msg, err := createMessage(cfg, release)
 	if err != nil {

@@ -1,0 +1,6 @@
+We just released version 3.0.0 of our Java SDK.
+This release brings liability and exemption type support to Java SDK
+Please read the changelog here
+https://github.com/unzerdev/java-sdk/blob/3.0.0/CHANGELOG.md
+
+#ecommerce

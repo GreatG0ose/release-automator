@@ -8,6 +8,7 @@ import (
 	"github.com/atc0005/go-teams-notify/v2/adaptivecard"
 )
 
+// createSignOffMessage creates sign-off request message for managers
 func createSignOffMessage(cfg config.Config, release release.Release) (*adaptivecard.Message, error) {
 	card := adaptivecard.NewCard()
 

@@ -13,7 +13,7 @@ import (
 //go:embed message.gotmpl
 var tmpl string
 
-// TODO: add docs
+// createMessage creates message object
 func createMessage(cfg config.Config, r release.Release) (*messagecard.MessageCard, error) {
 	m := messagecard.NewMessageCard()
 	m.Title = fmt.Sprintf("%s %s", cfg.Project.Name, r.Version)
@@ -29,7 +29,7 @@ func createMessage(cfg config.Config, r release.Release) (*messagecard.MessageCa
 	return m, nil
 }
 
-// TODO: add docs
+// renderMessage renders changes to message object
 func renderMessage(cfg config.Config, r release.Release) (string, error) {
 	type tmplCtx struct {
 		Config  config.Config

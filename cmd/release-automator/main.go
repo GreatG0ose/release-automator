@@ -83,9 +83,9 @@ func main() {
 	case sendMailCmd:
 		err = fullrelease_message.Send(cfg, r)
 	case renderTweetCmd:
-		err = tweet.Render(l, cfg, r)
+		err = tweet.Generate(l, cfg, r)
 	case getVersionChanges:
-		err = changes.GenerateVersionChangesFile(l, cfg, r)
+		err = changes.Generate(l, cfg, r)
 	default:
 		err = fmt.Errorf("unknown command %s", cmd)
 	}

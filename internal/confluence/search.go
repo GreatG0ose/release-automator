@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// GetReleasePageLink searches Confluence Release list page for child page containing target version in title
 func GetReleasePageLink(cfg config.Config, version string) (string, error) {
 	api, err := goconfluence.NewAPI(
 		cfg.Confluence.Endpoint,

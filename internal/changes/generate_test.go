@@ -4,6 +4,7 @@ import (
 	"github.com/GreatG0ose/release-automator/internal/changelog"
 	"github.com/GreatG0ose/release-automator/internal/config"
 	"github.com/GreatG0ose/release-automator/internal/release"
+	"github.com/GreatG0ose/release-automator/internal/test_utils"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -40,12 +41,8 @@ func TestGenerateVersionChangesFile(t *testing.T) {
 	}
 	assert.NoError(t, err)
 
-	err = GenerateVersionChangesFile(zerolog.Nop(), cfg, r)
+	err = Generate(zerolog.Nop(), cfg, r)
 	assert.NoError(t, err)
 
-	actual, err := os.ReadFile(filepath.Join(tmpdir, "changes.md"))
-	assert.NoError(t, err)
-
-	expected, err := os.ReadFile(filepath.Join("testdata", "changes.md"))
-	require.Equal(t, string(expected), string(actual))
+	test_utils.FilesEqual(t, filepath.Join("testdata", "changes.md"), filepath.Join(tmpdir, "changes.md"))
 }
