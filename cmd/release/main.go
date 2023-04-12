@@ -14,7 +14,6 @@ import (
 	"os"
 )
 
-const configDefaultPath = "release-automator.yaml"
 const (
 	signOffCmd     = "signoff"
 	sendMailCmd    = "mail"
@@ -35,7 +34,7 @@ func main() {
 
 	configPath := flag.String(
 		"config",
-		"",
+		"release.yaml",
 		"Path to release-automator YAML config",
 	)
 	flag.Parse()
@@ -47,14 +46,12 @@ func main() {
 	}
 
 	if *configPath == "" {
-		log.Trace().Str("config-path", configDefaultPath).Msg("config-path is not set. default value is used")
-		*configPath = configDefaultPath
-	} else {
-		log.Info().Str("config-path", *configPath).Msg("custom config is used")
+		log.Error().Msg("config path cannot be empty")
+		os.Exit(1)
 	}
 
 	// Load config
-	log.Info().Str("config-path", *configPath).Msg("loading config")
+	log.Info().Str("config", *configPath).Msg("loading config")
 	cfg, err := config.LoadConfig(*configPath)
 	if err != nil {
 		log.Err(err).Msg("couldn't load config")

@@ -1,6 +1,6 @@
 # Release Automator
 
-Automates release workflow steps:
+Automates release actions:
 
 * Send management sign-off message
 * Send release email
@@ -11,17 +11,22 @@ Automates release workflow steps:
 
 ## Commands
 
+Syntax
+```shell
+release --version=<RELEASE_VERSION> [--config=<CONFIG_PATH>] <COMMAND>
+```
+
 ### Arguments
 
-| Argument  | Required | Description                                                                   |
-|-----------|----------|-------------------------------------------------------------------------------|
-| --version | +        | Release version.                                                              |
-| --config  | -        | Path release-automator configuration file. Default: `release-automator.yaml`. |
+| Argument  | Required | Description                                                            |
+|-----------|----------|------------------------------------------------------------------------|
+| --version | +        | Release version. For example, `--version=1.2.3`                        |
+| --config  | -        | Path to release-automator configuration file. Default: `release.yaml`. |
 
 ### Send sign-off message
 
 ```shell
-release-automator --version="1.2.3" --config="java-sdk.yaml" signoff
+release --version="1.2.3" --config="java-sdk.yaml" signoff
 ```
 
 ### Send release email
@@ -29,7 +34,7 @@ release-automator --version="1.2.3" --config="java-sdk.yaml" signoff
 Send release email to Outlook using Webhook API.
 
 ```shell
-release-automator --version="1.2.3" --config="java-sdk.yaml" mail
+release --version="1.2.3" --config="java-sdk.yaml" mail
 ```
 
 ### Generate release notes
@@ -37,7 +42,7 @@ release-automator --version="1.2.3" --config="java-sdk.yaml" mail
 Generate markdown formatted release notes.
 
 ```shell
-release-automator --version="1.2.3" --config="java-sdk.yaml" tweet
+release --version="1.2.3" --config="java-sdk.yaml" tweet
 ```
 
 ### Generate twitter text
@@ -45,7 +50,7 @@ release-automator --version="1.2.3" --config="java-sdk.yaml" tweet
 Generate ready-to-post public release announce. Generated file
 
 ```shell
-release-automator --version="1.2.3" --config="java-sdk.yaml" notes
+release --version="1.2.3" --config="java-sdk.yaml" notes
 ```
 
 ## Configuration
