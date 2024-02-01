@@ -23,7 +23,7 @@ func Generate(l zerolog.Logger, c config.Config, r release.Release) error {
 	tmpl := template.Must(template.New("changes").Parse(changesTmpl))
 	outputFile := filepath.Join(c.Output, "ReleaseNotes.md")
 
-	l.Info().Msg("rendering changes...")
+	l.Info().Msg("rendering release notes...")
 	var data bytes.Buffer
 	err := tmpl.Execute(&data, r)
 	if err != nil {

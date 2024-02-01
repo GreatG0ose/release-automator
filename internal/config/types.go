@@ -20,6 +20,7 @@ type Project struct {
 type SignOff struct {
 	TeamsWebhook string    `yaml:"teamsWebhook"` // TeamsWebhook can be obtained from Teams Connector. See more: https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook
 	Mentions     []Mention `yaml:"mentions"`     // Mentions is list of contacts to mention in Signoff message
+	Content      Content   `yaml:"content"`      // Content of the message
 }
 
 // Mention is used for mentioning a person in MS Teams message
@@ -30,8 +31,14 @@ type Mention struct {
 
 // FullReleaseEmail configures full-release message sending. It consists of webhook url.
 type FullReleaseEmail struct {
-	OutlookWebhook string `yaml:"outlookWebhook"` // OutlookWebhook used for sending message to Outlook connector. See more how to obtain webhook: https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors
-	Template       string `yaml:"template"`       // Template for Outlook message. Golang text-template format is used.
+	OutlookWebhook string `yaml:"outlookWebhook"`               // OutlookWebhook used for sending message to Outlook connector. See more how to obtain webhook: https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors
+	Template       string `yaml:"template" validate:"required"` // Template for Outlook message. Golang text-template format is used.
+}
+
+// Content is used to modify generated message body
+type Content struct {
+	Prepend string `yaml:"prepend"` // Prepend is text prepended to generated message
+	Append  string `yaml:"append"`  // Append is text appended to generated message
 }
 
 // Confluence contains data used to access project page at Confluence

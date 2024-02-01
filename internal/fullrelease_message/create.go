@@ -10,9 +10,6 @@ import (
 	"text/template"
 )
 
-//go:embed message.gotmpl
-var tmpl string
-
 // createMessage creates message object
 func createMessage(cfg config.Config, r release.Release) (*messagecard.MessageCard, error) {
 	m := messagecard.NewMessageCard()
@@ -36,7 +33,7 @@ func renderMessage(cfg config.Config, r release.Release) (string, error) {
 		Release release.Release
 	}
 
-	t, err := template.New("message").Parse(tmpl)
+	t, err := template.New("message").Parse(cfg.FullReleaseEmail.Template)
 	if err != nil {
 		// template is totally fine. this branch must not be executed on production
 		panic(err)

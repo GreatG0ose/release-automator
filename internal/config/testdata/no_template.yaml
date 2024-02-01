@@ -13,34 +13,10 @@ signOff:
     append: "\n\nBest regards,\nFirstname Lastname"
 email:
   outlookWebhook: "https://webhook.office.com/webhookb2/<SOME-MAGIC-NUMBERS>"
-  template: |
-    Hello everyone,
-
-    We will release {{ .Config.Project.Name }} v{{ .Release.Version }} soon.
-
-    {{ .Release.Changes.Summary }}
-
-    <blockquote>
-    <h1>Changelog</h1>
-
-    {{ range $header, $body := .Release.Changes.Changes }}
-    <h2>{{ $header }}</h2>
-
-    {{ $body }}
-
-    {{ end }}
-    </blockquote>
-
-    <a href="{{ .Release.ChecklistUrl }}">Release checklist</a>
-
-    <p>
-    Best regards,
-    </p>
-    Development Team
-
 confluence:
   endpoint: "https://<COMPANY>.atlassian.net/wiki/rest/api"
-  releasesPageId: ""
+  releasesPageId: "123"
   credentials:
     username: "your@company.com"
     accessToken: "<access-token-obtained-from-confluence>"
+output: target/
