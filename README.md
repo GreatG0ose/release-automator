@@ -42,7 +42,7 @@ release --version="1.2.3" --config="java-sdk.yaml" mail
 Generate markdown formatted release notes.
 
 ```shell
-release --version="1.2.3" --config="java-sdk.yaml" tweet
+release --version="1.2.3" --config="java-sdk.yaml" notes
 ```
 
 ### Generate twitter text
@@ -50,7 +50,7 @@ release --version="1.2.3" --config="java-sdk.yaml" tweet
 Generate ready-to-post public release announce. Generated file
 
 ```shell
-release --version="1.2.3" --config="java-sdk.yaml" notes
+release --version="1.2.3" --config="java-sdk.yaml" tweet
 ```
 
 ## Configuration
