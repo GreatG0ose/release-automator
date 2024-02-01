@@ -1,9 +1,8 @@
 name: Publish to Docker
-on: [workflow_dispatch]
-#on:
-#  push:
-#    branches:
-#      - main
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
 permissions:
   packages: write
 jobs:

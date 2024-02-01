@@ -55,28 +55,7 @@ release --version="1.2.3" --config="java-sdk.yaml" notes
 
 ## Configuration
 
-```yaml
-project:
-  name: "<PROJECT NAME>"
-  changelogPath: "<PATH TO CHANGELOG>"
-  repository: https://github.com/<REPOSITORY>
-signOff:
-  teamsWebhook: "https://webhook.office.com/webhookb2/<SOME-MAGIC-NUMBERS>"
-  mentions:
-    - name: "Firstname Lastname"
-      teamsID: "firstname.lastname@company.com"
-    - name: "Other Person"
-      teamsID: "other.person@company.com"
-email:
-  outlookWebhook: "https://webhook.office.com/webhookb2/<OTHER-MAGIC-NUMBERS>"
-confluence:
-  endpoint: "https://<COMPANY>.atlassian.net/wiki/rest/api"
-  releasesPageId: <PARENT PAGE FOR RELEASES>
-  credentials:
-    username: "your@company.com"
-    accessToken: "access-token-obtained-from-confluence"
-output: <DIRECTORY FOR GENERATED FILES>  
-```
+See [release-config.yaml](release-config.yaml)
 
 ## Docker
 

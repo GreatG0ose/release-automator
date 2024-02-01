@@ -1,4 +1,4 @@
 .idea
 .git
 .github
-release-automator.yaml
+release-config.yaml
