@@ -12,10 +12,10 @@ import (
 )
 
 const changesTmpl = `{{ .Changes.Summary }}
-{{ range $header, $content := .Changes.Changes}}
-## {{ $header }}
+{{ range .Changes.Changes}}
+## {{ .Header }}
 
-{{ $content }}
+{{ .Body }}
 {{ end -}}`
 
 // Generate generates Markdown formatted file in Config.Output directory

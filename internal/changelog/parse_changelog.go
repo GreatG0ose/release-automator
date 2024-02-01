@@ -4,13 +4,20 @@ import (
 	"fmt"
 	"github.com/GreatG0ose/release-automator/internal/config"
 	"os"
+	"sort"
 	"strings"
 )
 
 // ReleaseChanges contains summary of a release and it's changes
 type ReleaseChanges struct {
-	Summary string            // Overall summary of the release
-	Changes map[string]string // Headers to markdown formatted changes
+	Summary string        // Overall summary of the release
+	Changes []ChangeBlock // Headers to markdown formatted changes
+}
+
+// ChangeBlock contains header and related text block
+type ChangeBlock struct {
+	Header string // Header of the change block
+	Body   string // Body of the change block
 }
 
 // ExtractReleaseChanges parses changelog and returns ReleaseChanges for version
@@ -66,13 +73,15 @@ func ExtractReleaseChanges(cfg config.Config, releaseVersion string) (ReleaseCha
 }
 
 // parseChanges extracts headers and related text blocks from version section of changelog
-func parseChanges(changes []string) map[string]string {
+func parseChanges(changes []string) []ChangeBlock {
 	mappedBlocks := make(map[string][]string)
 
+	var headers []string
 	currentHeader := ""
 	for _, l := range changes {
 		if strings.HasPrefix(l, "### ") {
 			currentHeader = strings.TrimSpace(strings.TrimPrefix(l, "###"))
+			headers = append(headers, currentHeader)
 		} else if currentHeader == "" {
 			continue
 		} else {
@@ -80,9 +89,18 @@ func parseChanges(changes []string) map[string]string {
 		}
 	}
 
-	result := make(map[string]string)
+	headerToContentMap := make(map[string]string)
 	for h, b := range mappedBlocks {
-		result[h] = strings.TrimSpace(strings.Join(b, "\n"))
+		headerToContentMap[h] = strings.TrimSpace(strings.Join(b, "\n"))
+	}
+	sort.Strings(headers)
+
+	var result []ChangeBlock
+	for _, h := range headers {
+		result = append(result, ChangeBlock{
+			Header: h,
+			Body:   headerToContentMap[h],
+		})
 	}
 
 	return result

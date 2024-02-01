@@ -15,16 +15,17 @@ func createSignOffMessage(cfg config.Config, release release.Release) (*adaptive
 	// Teams message consists of different blocks
 	messageElements := []adaptivecard.Element{
 		adaptivecard.NewTitleTextBlock(fmt.Sprintf("Request for management sign-off: %s Release Version v%s", cfg.Project.Name, release.Version), true),
-		adaptivecard.NewTextBlock(release.Changes.Summary, true),                                               // Summary block
-		adaptivecard.NewTextBlock("Release will take place provided the Go/NoGo meeting resulted in Go", true), // Go/NoGo part
-		adaptivecard.NewTitleTextBlock("Changelog", true),                                                      // Changes title
+		adaptivecard.NewTextBlock(cfg.SignOff.Content.Prepend, true), // Prepend block
+
+		adaptivecard.NewTitleTextBlock("Changelog", true),        // Changes title
+		adaptivecard.NewTextBlock(release.Changes.Summary, true), // Summary block
 	}
 
 	// changes titles and blocks
-	for h, b := range release.Changes.Changes {
+	for _, change := range release.Changes.Changes {
 		messageElements = append(messageElements,
-			adaptivecard.NewTitleTextBlock(h, true),
-			adaptivecard.NewTextBlock(b, true),
+			adaptivecard.NewTitleTextBlock(change.Header, true),
+			adaptivecard.NewTextBlock(change.Body, true),
 		)
 	}
 
@@ -40,6 +41,9 @@ func createSignOffMessage(cfg config.Config, release release.Release) (*adaptive
 			true,
 		),
 	)
+
+	// Post changelog block
+	messageElements = append(messageElements, adaptivecard.NewTextBlock(cfg.SignOff.Content.Append, true))
 
 	err := card.AddElement(false, messageElements...)
 	if err != nil {
