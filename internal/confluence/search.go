@@ -25,12 +25,12 @@ func GetReleasePageLink(cfg config.Config, version string) (string, error) {
 	}
 
 	for _, p := range searchResp.Results {
-		if strings.Contains(p.Title, version) {
+		if strings.Contains(p.Title, version) && strings.Contains(p.Title, cfg.Project.Name) {
 			return buildPageUrl(cfg.Confluence.Endpoint, p.ID)
 		}
 	}
 
-	return "", fmt.Errorf("release page not found for version %s", version)
+	return "", fmt.Errorf("release page not found for project %s version %s", cfg.Project.Name, version)
 }
 
 func buildPageUrl(endpoint, pageId string) (string, error) {
