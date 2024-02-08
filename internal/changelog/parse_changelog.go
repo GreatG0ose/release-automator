@@ -55,6 +55,8 @@ func ExtractReleaseChanges(cfg config.Config, releaseVersion string) (ReleaseCha
 	releaseSegment := lines[releaseStart:releaseEnd]
 
 	// Extract summary
+	summary := ""
+
 	summaryEnd := -1
 	for i, l := range releaseSegment[1:] {
 		if strings.HasPrefix(l, "### ") {
@@ -62,9 +64,12 @@ func ExtractReleaseChanges(cfg config.Config, releaseVersion string) (ReleaseCha
 			break
 		}
 	}
-	summary := strings.TrimSpace(
-		strings.Join(releaseSegment[1:summaryEnd], "\n"),
-	)
+
+	if summaryEnd > -1 {
+		summary = strings.TrimSpace(
+			strings.Join(releaseSegment[1:summaryEnd], "\n"),
+		)
+	}
 
 	return ReleaseChanges{
 		Summary: summary,
