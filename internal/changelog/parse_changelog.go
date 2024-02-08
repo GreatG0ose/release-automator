@@ -65,7 +65,7 @@ func ExtractReleaseChanges(cfg config.Config, releaseVersion string) (ReleaseCha
 		}
 	}
 
-	if summaryEnd > -1 {
+	if summaryEnd > 0 {
 		summary = strings.TrimSpace(
 			strings.Join(releaseSegment[1:summaryEnd], "\n"),
 		)
