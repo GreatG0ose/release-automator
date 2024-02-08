@@ -44,7 +44,7 @@ func ExtractReleaseChanges(cfg config.Config, releaseVersion string) (ReleaseCha
 	}
 
 	// Find segment end
-	releaseEnd := len(lines) - 1
+	releaseEnd := len(lines)
 	for i := releaseStart + 1; i < len(lines); i++ {
 		if strings.HasPrefix(lines[i], "## ") {
 			releaseEnd = i
